@@ -23,4 +23,4 @@ jobs:
         context: .
         push: true
         tags: manpreet2004/ci-cd-data-pipeline:latest
-        
+      
