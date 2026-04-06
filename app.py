@@ -1,38 +1,52 @@
 import streamlit as st
 import pandas as pd
-import time
+import plotly.express as px
 
-# Page configuration
-st.set_page_config(page_title="Automated Data Pipeline", page_icon="🚀")
+# Professional UI Config
+st.set_page_config(page_title="Enterprise Data Pipeline", layout="wide")
 
-# Title and Description
-st.title("🚀 Automated Data Pipeline Dashboard")
-st.markdown("### College Project: CI/CD with GitHub Actions & Docker")
-st.write("Ye pipeline automatically data fetch karta hai aur Docker Hub par upload hota hai.")
+# Custom Styling
+st.markdown("""
+    <style>
+    .reportview-container { background: #f5f7f9; }
+    .sidebar .sidebar-content { background: #262730; color: white; }
+    </style>
+    """, unsafe_allow_stats=True)
 
-# Sidebar for status
-st.sidebar.header("Pipeline Status")
-st.sidebar.success("CI/CD: Connected ✅")
-st.sidebar.info("Docker Hub: Image Updated ✅")
+st.title("🛡️ Enterprise Data Intelligence Dashboard")
+st.caption("Status: **Production Ready** | CI/CD Connected via GitHub")
 
-# Simulation of Data Fetching
-if st.button('Fetch Latest Data'):
-    with st.spinner('Fetching data from pipeline...'):
-        time.sleep(2)
-        st.success("Data successfully fetched!")
-        
-        # Creating a sample data table
-        data = {
-            'ID': [1, 2, 3, 4],
-            'Status': ['Processed', 'Processed', 'Pending', 'Processed'],
-            'Time': ['10:00 AM', '10:05 AM', '10:10 AM', '10:15 AM']
-        }
-        df = pd.DataFrame(data)
-        st.table(df)
+# Sidebar
+st.sidebar.title("Pipeline Overview")
+st.sidebar.metric(label="System Status", value="Online", delta="Healthy")
+st.sidebar.markdown("---")
+st.sidebar.write("**Developed by:** Manpreet")
 
-# Graph for Teacher to see
-st.subheader("Data Analysis Graph")
-chart_data = pd.DataFrame([10, 20, 15, 30, 25], columns=['Processing Speed'])
-st.line_chart(chart_data)
+# File Upload Section
+uploaded_file = st.file_uploader("📂 Upload Business Data (CSV)", type=["csv"])
 
-st.info("Built by Manpreet | DevOps Project 2026")
+if uploaded_file:
+    df = pd.read_csv(uploaded_file)
+    
+    # KPIs Row
+    st.markdown("### 📊 Key Performance Indicators")
+    kpi1, kpi2, kpi3 = st.columns(3)
+    kpi1.metric("Total Records", len(df))
+    kpi2.metric("Data Columns", len(df.columns))
+    kpi3.metric("Pipeline Health", "100%")
+
+    # Charts
+    st.markdown("---")
+    col_chart, col_data = st.columns([2, 1])
+    
+    with col_chart:
+        num_cols = df.select_dtypes(include=['number']).columns.tolist()
+        if num_cols:
+            fig = px.line(df, y=num_cols[0], title="Performance Trend Analysis", template="plotly_white")
+            st.plotly_chart(fig, use_container_width=True)
+            
+    with col_data:
+        st.write("#### Data Snapshot")
+        st.dataframe(df.head(10), use_container_width=True)
+else:
+    st.info("System is waiting for a CSV file input to initialize the pipeline.")
